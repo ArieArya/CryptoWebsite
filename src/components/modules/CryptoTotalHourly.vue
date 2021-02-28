@@ -97,7 +97,7 @@ export default {
               }
             },
             dataLabels: {
-              enabled: true,
+              enabled: false,
               formatter: function (val) {
                   return val.toFixed(2)
               },

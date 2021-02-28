@@ -31,7 +31,7 @@
     </div>
 
     <div class="crypto-info">
-      test
+      
     </div>
   </div>
 </template>
@@ -128,6 +128,10 @@ export default {
   }
   &.table.is-striped tbody tr:not(.is-selected):nth-child(even){
     background-color: #131924;
+  }
+
+  .top.level .level-right .level-item .pagination {
+    background-color: red !important;
   }
 }
 </style>

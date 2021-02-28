@@ -1,5 +1,6 @@
 <template>
-  <div class="card" id="chart">
+  <div class="column is-one-third card" id="chart">
+    {{ symbol }}
     <apexchart type="line" height="240" :options="chartOptions" :series="series"></apexchart>
   </div>
 </template>
@@ -9,26 +10,38 @@ import { userService } from '@/_services';
 
 export default {
   name: 'CryptoCoinGraph',
+  props: {
+    coinSymbol: String
+  },
   data(){
     return {
       data: [],
       series: [],
+      symbol: this.coinSymbol,
       chartOptions: {
         chart: {
           type: 'area',
           height: 180,
-          sparkline: {
-            enabled: true
+          toolbar: {
+            show: false,
           },
         },
         stroke: {
-          curve: 'straight'
+          curve: 'smooth'
         },
         fill: {
           opacity: 0.3,
         },
+        xaxis: {
+          type: 'datetime',
+        },
         yaxis: {
-          min: 0
+          min: 0,
+          labels: {
+            formatter: function (val) {
+              return val.toFixed(2);
+            },
+          },
         },
         colors: ['#7957D5'],
         title: {
@@ -41,6 +54,7 @@ export default {
         subtitle: {
           text: 'Total Score',
           offsetX: 0,
+          offsetY: 0,
           style: {
             fontSize: '14px',
           }
@@ -53,7 +67,7 @@ export default {
     loadAsyncData() {
       this.loading = true
 
-      userService.getCoinHourly('BTC', "24H")
+      userService.getCoinHourly(this.symbol, "24H")
         .then(({ data }) => {
           this.data = []
           this.series = []
@@ -66,7 +80,7 @@ export default {
             field.crypto_info.forEach((item) => {
               var table_obj = {
                 x: item.date,
-                y: item.count
+                y: item.score
               }
               table_arr.push(table_obj)
             })
@@ -97,3 +111,4 @@ export default {
   }
 }
 </script>
+

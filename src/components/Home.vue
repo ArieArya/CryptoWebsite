@@ -5,14 +5,12 @@
         <div class="container-header tile is-child">
           <div id="header-button-group">
             <section>
-              <search-bar />
+              <search-bar v-on:createComponentEvent="createComponent" />
             </section>
           </div>
         </div>
         <div class="container-body tile is-child">
-          <div class="columns" style="padding: 0 12px">
-            <crypto-coin-graph class="column is-one-third" />
-          </div>
+          <div class="columns is-variable is-multiline is-2" ref="container"></div>
         </div>
       </div>
     </div>
@@ -24,21 +22,33 @@
 </template>
 
 <script>
+import Vue from 'vue'
+
 import SearchBar from './layout/SearchBar.vue'
-import CryptoCoinGraph from './modules/CryptoCoinGraph.vue'
 import CryptoRanking from './modules/CryptoRanking.vue'
 import CryptoTotalHourly from './modules/CryptoTotalHourly.vue'
 
-
+const CryptoCoinGraph = require('./modules/CryptoCoinGraph.vue').default
 
 export default {
   name: 'Home',
   components: {
     CryptoRanking,
-    CryptoCoinGraph,
+    ...CryptoCoinGraph,
     CryptoTotalHourly,
     SearchBar,
   },
+  methods: {
+    createComponent(coin_name) {
+      var ComponentClass = Vue.extend(CryptoCoinGraph)
+      var instance = new ComponentClass({
+          propsData: { coinSymbol: coin_name }
+      })
+      instance.$mount() // pass nothing
+      this.$refs.container.appendChild(instance.$el)
+      console.log("Component added!")
+    }
+  }
 }
 </script>
 

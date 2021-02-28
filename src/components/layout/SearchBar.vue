@@ -5,22 +5,23 @@
         clearable
         :data="filteredDataArray"
         placeholder="e.g. BTC"
-        field="title"
+        field="symbol"
+        icon="search"
         v-model="symbol"
         :loading="isFetching"
         @typing="getAsyncData"
-        @select="option => selected = option">
+        @select="option => addComponent(option)">
 
         <template slot-scope="props">
             <div class="media">
                 <div class="media-left">
-                    <h1>{{ props.option.symbol }}</h1>
+                    <h1>{{ props.option.symbol }}/ {{ props.option.slug }}</h1>
                 </div>
                 <div class="media-content">
-                    {{ props.option.slug }}
+                      ${{ parseFloat(props.option.price).toPrecision(6) }}
                     <br>
-                    <small>
-                        Price {{ props.option.price }},
+                    <small v-bind:class="[props.option.percent_change_24h >= 0 ? 'is-positive' : 'is-negative']">
+                      {{ parseFloat(props.option.percent_change_24h).toFixed(2) }} %
                     </small>
                 </div>
             </div>
@@ -42,13 +43,8 @@ export default {
     }
   },
   methods: {
-    getAsyncData(name) {
-      if (!name.length) {
-          this.data = []
-          return
-      }
+    getAsyncData() {
       this.isFetching = true
-
       userService.getAllCoin()
         .then(({ data }) => {
           this.data = []
@@ -61,7 +57,10 @@ export default {
         .finally(() => {
             this.isFetching = false
         })
-    }
+    },
+    addComponent(opt) {
+      this.$emit('createComponentEvent', opt.symbol)
+    },
   },
   computed: {
     filteredDataArray() {
@@ -71,28 +70,45 @@ export default {
               .toLowerCase()
               .indexOf(this.symbol.toLowerCase()) >= 0
       })
-    }
-  }
+    },
+  },
 
 }
 </script>
 
-<style>
-.autocomplete .dropdown-content {
-  width: 300px;
-  text-align: right;
-  position: absolute;
-  right: 0;
-  overflow-y: scroll;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+<style lang="scss">
+.autocomplete {
+  width: 350px;
+  
+  .control > input {
+    padding-left: 20px;
+  }
+  .dropdown-content {
+    width: 400px;
+    text-align: right;
+    position: absolute;
+    right: -20px;
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+
+    .dropdown-item .media .media-content {
+      font-size: 0.8rem;
+      font-weight: 400;
+      small {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+    }
+  }
+  .dropdown-content::-webkit-scrollbar { /* WebKit */
+    width: 5px;
+    height: 0;
+  }
+
 }
 
-.autocomplete .dropdown-content::-webkit-scrollbar { /* WebKit */
-  width: 5px;
-  height: 0;
-}
-
+.autocomplete 
 .autocomplete .dropdown-content::-webkit-scrollbar-thumb
 {
 	border-radius: 20px;
@@ -103,5 +119,13 @@ export default {
 {
 	border-radius: 10px;
 	background-color: #F5F5F5;
+}
+
+.is-positive {
+  color: #088a64;
+}
+
+.is-negative {
+  color: #ff4560;
 }
 </style>

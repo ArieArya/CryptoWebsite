@@ -9,10 +9,11 @@ Vue.config.productionTip = false
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 // internal icons
-import { faPlus, faCaretUp, faCaretDown, faArrowUp, faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faCaretUp, faCaretDown, faArrowUp, faAngleLeft, faAngleRight, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add( faCaretUp, faCaretDown, faPlus, faArrowUp, faAngleLeft, faAngleRight );
+library.add( faCaretUp, faCaretDown, faPlus, faArrowUp, faAngleLeft, faAngleRight,
+             faSearch );
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 
 Vue.use(Buefy, {
